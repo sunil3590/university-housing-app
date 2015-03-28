@@ -1,3 +1,7 @@
+# keep these folders away
 /target
-/bin
 /.settings
+
+# keep these files away (please build them yourself)
+.classpath
+.project
