@@ -37,6 +37,10 @@ public class User {
 		// read any old data
 		scanner.nextLine();
 		
+		//TODO: Handle Guest and Student / Admin separately
+		// Changes pertaining to this should be done once suitable changes
+		// are made in backend database.
+		
 		// get credentials
 		System.out.println("Enter user ID : ");
 		String uid = scanner.nextLine();
