@@ -6,27 +6,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-//TODO: Make Person class and let Student and Guest inherit from that
-public class Guest extends Student {
-	
-	//private Connection conn = null;
-	//private Scanner scanner = null;
-	//private int loginId = -1;
+public class Guest extends Person {
 	
 	public Guest(int loginId, Connection conn, Scanner scanner) {
 		
-		super(loginId, conn, scanner);
 		// a connection is always needed
-		/* if(conn == null || scanner == null || loginId < 0) {
+		if(conn == null || scanner == null || loginId < 0) {
 			System.out.println("Guest.Guest() ~ null input");
 			return;
 		}
 		
 		this.conn = conn;
 		this.scanner = scanner;
-		this.loginId = loginId; */
+		this.loginId = loginId;
 	}
 	
+	//@Override
 	public void viewVacancy() {
 		
 		System.out.println("View vacancy in Guest");
@@ -34,6 +29,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewCurrentInvoice() {
 		
 		System.out.println("View Current Invoice for Guest");
@@ -42,6 +38,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewFormerInvoices() {
 		
 		System.out.println("Which former Invoice you want to see? " +
@@ -53,12 +50,14 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewCurrentLease() {
 		
 		System.out.println("View Current Lease for Guest");
 		//TODO Enter the query for GUEST here
 	}
 	
+	//@Override
 	public void viewFormerLeases() {
 		
 		System.out.println("Which former Lease you want to see? " +
@@ -71,6 +70,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void newLeaseRequest() {
 		
 		System.out.println("Enter the following details");
@@ -81,6 +81,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void terminateLease() {
 		
 		System.out.println("GUEST Terminate Lease");
@@ -88,6 +89,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewRequest() {
 		
 		System.out.println("GUEST View Request");
@@ -95,6 +97,7 @@ public class Guest extends Student {
 		//TODO Enter the query for GUEST here
 	}
 	
+	//@Override
 	public void cancelRequest() {
 		
 		System.out.println("GUEST View Request");
@@ -103,6 +106,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void requestParkingSpot() {
 		
 		System.out.println("GUEST Request Parking");
@@ -111,6 +115,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewParkingInformation() {
 		
 		System.out.println("GUEST View Parking");
@@ -120,6 +125,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewCurrentParkingSpot() {
 
 		System.out.println("GUEST View Parking Spot");
@@ -128,6 +134,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void renewParkingSpot() {
 		
 		System.out.println("GUEST Renew Parking Spot");
@@ -136,6 +143,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void returnParkingSpot() {
 		
 		System.out.println("GUEST Return Parking Spot");
@@ -144,6 +152,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewRequestStatus() {
 		
 		System.out.println("GUEST View Request Status");
@@ -152,6 +161,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void raiseNewTicket() {
 		
 		System.out.println("GUEST Raise New Ticket");
@@ -160,6 +170,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewTicketStatus() {
 		
 		System.out.println("GUEST View Ticket Status");
@@ -168,6 +179,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void viewProfile() {
 		
 		System.out.println("GUEST View Profile");
@@ -176,6 +188,7 @@ public class Guest extends Student {
 		
 	}
 	
+	//@Override
 	public void updateProfile() {
 		
 		System.out.println("GUEST Update Profile");

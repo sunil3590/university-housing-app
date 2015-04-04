@@ -14,14 +14,14 @@ public class UniversityHousingApp {
 	private static Scanner scanner;
 	
 	//Student is the base class, passing its reference as parameter
-	private static void handleUser(Student student) {
+	private static void handleUser(Person person) {
 		
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
 			//Display the options available to a Student
-			System.out.println("\n\n" + "Hi " + student.loginId);
+			System.out.println("\n\n" + "Hi " + person.loginId);
 			System.out.println("What do you want to do next?");
 			System.out.println("1 - Housing option");
 			System.out.println("2 - Parking option");
@@ -33,16 +33,16 @@ public class UniversityHousingApp {
 			int option = scanner.nextInt();
 			switch(option) {
 			case 1:
-				handleHousing(student);
+				handleHousing(person);
 				break;
 			case 2:
-				handleParking(student);
+				handleParking(person);
 				break;
 			case 3:
-				handleMaintenance(student);
+				handleMaintenance(person);
 				break;
 			case 4:
-				handleProfile(student);
+				handleProfile(person);
 				break;
 			case 5:
 				return;
@@ -55,7 +55,7 @@ public class UniversityHousingApp {
 	}
 	
 	//Helps user navigate through various options provided by Housing
-	private static void handleHousing(Student student) {
+	private static void handleHousing(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -99,7 +99,7 @@ public class UniversityHousingApp {
 	}
 
 	//Helps user navigate through various Parking options
-	private static void handleParking(Student student) {
+	private static void handleParking(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -147,7 +147,7 @@ public class UniversityHousingApp {
 		
 	}
 	
-	private static void handleMaintenance(Student student) {
+	private static void handleMaintenance(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -178,7 +178,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void handleProfile(Student student) {
+	private static void handleProfile(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -207,7 +207,7 @@ public class UniversityHousingApp {
 		}
 	}
 
-	private static void viewInvoices(Student student) {
+	private static void viewInvoices(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -238,7 +238,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void viewLeases(Student student) {
+	private static void viewLeases(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -269,7 +269,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void makeNewRequest(Student student) {
+	private static void makeNewRequest(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -299,7 +299,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void viewCancelRequest(Student student) {
+	private static void viewCancelRequest(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -460,7 +460,7 @@ public class UniversityHousingApp {
 					//A Student or an Admin
 					if(user.getUserType() == UserType.STUDENT) {
 						//User of the application is a Student
-						Student student = new Student(user.getLoginId(), conn, scanner);
+						Person student = new Student(user.getLoginId(), conn, scanner);
 						handleUser(student);	
 					} else if(user.getUserType() == UserType.ADMIN) {
 						//User of the application is an Admin
