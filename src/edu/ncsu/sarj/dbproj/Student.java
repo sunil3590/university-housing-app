@@ -25,6 +25,20 @@ public class Student extends Person {
 		
 		System.out.println("View vacancy in student");
 		//TODO Enter the query for STUDENT here
+		try {
+			Statement stmt = conn.createStatement();
+			
+			String query = "SELECT * FROM LOGIN WHERE LOGIN_NAME_V = '" + 
+					 "'" + " AND LOGIN_PWD_V = '" + "'";
+			
+			ResultSet result = stmt.executeQuery(query);
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 	}
 

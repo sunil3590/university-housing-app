@@ -9,84 +9,42 @@ public abstract class Person {
 	protected Scanner scanner = null;
 	protected int loginId = -1;
 	
-	public void viewVacancy() {
-				
-	}
+	public abstract void viewVacancy();
 
-	public void viewCurrentInvoice() {
-		
-	}
+	public abstract void viewCurrentInvoice();
 
-	public void viewFormerInvoices() {
-		
-	}
+	public abstract void viewFormerInvoices();
 
-	public void viewCurrentLease() {
-		
-	}
+	public abstract void viewCurrentLease();
 
-	public void viewFormerLeases() {
-		
-	}
+	public abstract void viewFormerLeases();
 
-	public void newLeaseRequest() {
-		
-	}
+	public abstract void newLeaseRequest();
 
-	public void terminateLease() {
-		
-	}
+	public abstract void terminateLease();
 
-	public void viewRequest() {
-		
-	}
+	public abstract void viewRequest();
 
-	public void cancelRequest() {
-		
-	}
+	public abstract void cancelRequest();
 
-	public void requestParkingSpot() {
-		
-	}
+	public abstract void requestParkingSpot();
 
-	public void viewParkingInformation() {
+	public abstract void viewParkingInformation();
+
+	public abstract void viewCurrentParkingSpot();
+
+	public abstract void renewParkingSpot();
+
+	public abstract void returnParkingSpot();
+
+	public abstract void viewRequestStatus();
+
+	public abstract void raiseNewTicket();
 	
-	}
+	public abstract void viewTicketStatus();
 
-	public void viewCurrentParkingSpot() {
+	public abstract void viewProfile();
 
-	}
-
-	public void renewParkingSpot() {
-		
-	}
-
-	public void returnParkingSpot() {
-		
-		
-	}
-
-	public void viewRequestStatus() {
-		
-		
-	}
-
-	public void raiseNewTicket() {
-		
-	}
-
-	public void viewTicketStatus() {
-		
-	}
-
-	public void viewProfile() {
-		
-		
-	}
-
-	public void updateProfile() {
-		
-	}
-	
+	public abstract void updateProfile();
 
 }
