@@ -43,8 +43,8 @@ public class DBConnFactory {
 			try {
 				// NCSU DB server, user name and password
 				String dbUrl = "jdbc:oracle:thin:@ora.csc.ncsu.edu:1521:orcl";
-				String user = "sdavang"; //unityID
-				String pass = "200063506"; //student ID number
+				String user = "aravi5"; //unityID
+				String pass = "200059828"; //student ID number
 				
 				sqlConnection = (Connection) DriverManager.getConnection(
 						dbUrl, user, pass);
