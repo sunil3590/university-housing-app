@@ -8,17 +8,45 @@ import java.sql.Statement;
 
 public class Guest extends Person {
 	
-	public Guest(int loginId, Connection conn, Scanner scanner) {
+	public Guest(Connection conn, Scanner scanner) {
 		
 		// a connection is always needed
-		if(conn == null || scanner == null || loginId < 0) {
+		if(conn == null || scanner == null) {
 			System.out.println("Guest.Guest() ~ null input");
 			return;
 		}
 		
 		this.conn = conn;
 		this.scanner = scanner;
-		this.loginId = loginId;
+	}
+	
+	//@Override
+	public boolean login(String approvalId, String pass) {		
+		// SQL query to check credentials
+		try {
+			Statement stmt = conn.createStatement();
+			
+			String query = "SELECT * FROM LOGIN WHERE LOGIN_NAME_V = '" + 
+					approvalId + "'";
+			
+			ResultSet result = stmt.executeQuery(query);
+			
+			result.next();
+			
+			this.loginId = result.getInt("LOGIN_ID_N");
+			String userType = result.getString("LOGIN_TYPE_V");
+			
+			if(userType.equals("guest")) {
+				this.userType = UserType.GUEST;
+			} else {
+				System.out.println("Guest.login() ~ login failed ");
+				return false;
+			}
+		} catch (SQLException e) {
+			System.out.println("Guest.login() ~ login failed " + e);
+		}
+		
+		return true;
 	}
 	
 	//@Override
@@ -33,8 +61,10 @@ public class Guest extends Person {
 	public void viewCurrentInvoice() {
 		
 		System.out.println("View Current Invoice for Guest");
-		//TODO Enter the query for GUEST here
 		
+		System.out.println("Enter approval ID : ");
+		
+		//TODO: Enter the query for GUEST here
 		
 	}
 	

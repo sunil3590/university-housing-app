@@ -2,6 +2,9 @@ package edu.ncsu.sarj.dbproj;
 
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 
@@ -13,9 +16,9 @@ public class UniversityHousingApp {
 	private static Connection conn;
 	private static Scanner scanner;
 	
+	
 	//Student is the base class, passing its reference as parameter
-	private static void handleUser(Person person) {
-		
+	public static void handleUser(Person person) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -33,16 +36,16 @@ public class UniversityHousingApp {
 			int option = scanner.nextInt();
 			switch(option) {
 			case 1:
-				handleHousing(person);
+				housingMenu(person);
 				break;
 			case 2:
-				handleParking(person);
+				parkingMenu(person);
 				break;
 			case 3:
-				handleMaintenance(person);
+				maintenanceMenu(person);
 				break;
 			case 4:
-				handleProfile(person);
+				profileMenu(person);
 				break;
 			case 5:
 				return;
@@ -51,11 +54,10 @@ public class UniversityHousingApp {
 			}
 		}
 		
-		
 	}
 	
 	//Helps user navigate through various options provided by Housing
-	private static void handleHousing(Person student) {
+	public static void housingMenu(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -75,10 +77,10 @@ public class UniversityHousingApp {
 			int option = scanner.nextInt();
 			switch(option) {
 			case 1:
-				viewInvoices(student);
+				invoiceMenu(student);
 				break;
 			case 2:
-				viewLeases(student);
+				leaseMenu(student);
 				break;
 			case 3:
 				makeNewRequest(student);
@@ -99,7 +101,7 @@ public class UniversityHousingApp {
 	}
 
 	//Helps user navigate through various Parking options
-	private static void handleParking(Person student) {
+	public static void parkingMenu(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -144,10 +146,9 @@ public class UniversityHousingApp {
 				System.out.println("Invalid choice");
 			}
 		}
-		
 	}
 	
-	private static void handleMaintenance(Person student) {
+	public static void maintenanceMenu(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -178,7 +179,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void handleProfile(Person student) {
+	private static void profileMenu(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -207,7 +208,7 @@ public class UniversityHousingApp {
 		}
 	}
 
-	private static void viewInvoices(Person student) {
+	public static void invoiceMenu(Person student) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -238,7 +239,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void viewLeases(Person student) {
+	public static void leaseMenu(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -269,7 +270,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void makeNewRequest(Person student) {
+	public static void makeNewRequest(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -299,7 +300,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void viewCancelRequest(Person student) {
+	public static void viewCancelRequest(Person student) {
 		boolean keepRunning = true;
 		while(keepRunning) {
 			
@@ -329,7 +330,7 @@ public class UniversityHousingApp {
 		
 	}
 
-	private static void handleAdmin(Admin admin) {
+	public static void handleAdmin(Admin admin) {
 		System.out.println("Hi admin");
 		
 		boolean keepRunning = true;
@@ -362,7 +363,7 @@ public class UniversityHousingApp {
 				admin.viewParkingRequests();
 				break;
 			case 5:
-				handleAdminProfile(admin);
+				adminProfileMenu(admin);
 				break;
 			case 6:
 				System.out.println("Back");
@@ -371,11 +372,9 @@ public class UniversityHousingApp {
 				System.out.println("Invalid choice");
 			}
 		}
-		
-		
 	}
 
-	private static void handleAdminProfile(Admin admin) {
+	public static void adminProfileMenu(Admin admin) {
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -405,9 +404,35 @@ public class UniversityHousingApp {
 		}
 		
 	}
-
-	private static void handleGuest(Guest guest) {
-		System.out.println("Hi guest");
+	
+	private static UserType getUserType(String uid, String pass) {
+		// SQL query to check user type
+		try {
+			Statement stmt = conn.createStatement();
+			
+			String query = "SELECT * FROM LOGIN WHERE LOGIN_NAME_V = '" + 
+					uid + "'" + " AND LOGIN_PWD_V = '" + pass + "'";
+			
+			ResultSet result = stmt.executeQuery(query);
+			
+			result.next();
+			
+			String userType = result.getString("LOGIN_TYPE_V");
+			
+			if(userType.equals("student")) {
+				return UserType.STUDENT;
+			} else if(userType.equals("admin")) {
+				return UserType.ADMIN;
+			}
+			
+			//TODO : notify caller of this error
+			System.out.println("Login failed");
+			return UserType.UNKNOWN;
+		} catch (SQLException e) {
+			System.out.println("UniversityHousingApp.getUserType() ~ login failed " + e);
+		}
+		
+		return UserType.UNKNOWN;
 	}
 	
 	public static void main(String[] args) {
@@ -443,45 +468,62 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int login = scanner.nextInt();
-			int result = 0;
+			scanner.nextLine(); // read new line
+			boolean result = false;
+			
 			switch(login) {
-			case 1:
-			case 2:
-				User user = new User(conn, scanner);
+			case 1:				
+				// get credentials
+				System.out.print("Enter user ID : ");
+				String uid = scanner.nextLine();
+				System.out.print("Enter password : ");
+				String pass = scanner.nextLine();
 				
-				result = user.login();
-				if(result == -1) {
+				UserType userType = getUserType(uid, pass);
+				
+				if(userType == UserType.STUDENT) {
+					Student student = new Student(conn, scanner);
+					
+					result = student.login(uid, pass);
+					if(result == false) {
+						System.out.println("Login failed. Try again.");
+						break;
+					}
+					
+					// handle everything for student here
+					handleUser(student);
+				} else if(userType == UserType.ADMIN) {
+					Admin admin = new Admin(conn, scanner);
+					
+					result = admin.login(uid, pass);
+					if(result == false) {
+						System.out.println("Login failed. Try again.");
+						break;
+					}
+					
+					// handle everything for guest here
+					handleAdmin(admin);	
+				} else {
+					System.out.println("Login failed. Try again.");
+				}
+				
+				break;
+				
+			case 2:
+				// get credentials
+				System.out.println("Enter approval ID : ");
+				String approvalId = scanner.nextLine();
+				
+				Guest guest = new Guest(conn, scanner);
+				
+				result = guest.login(approvalId, null);
+				if(result == false) {
 					System.out.println("Login failed. Try again.");
 					break;
 				}
-				
-				// Handle EVERYTHING else
-				if(login == 1) {
-					//A Student or an Admin
-					if(user.getUserType() == UserType.STUDENT) {
-						//User of the application is a Student
-						Person student = new Student(user.getLoginId(), conn, scanner);
-						handleUser(student);	
-					} else if(user.getUserType() == UserType.ADMIN) {
-						//User of the application is an Admin
-						Admin admin = new Admin(user.getLoginId(), conn, scanner);
-						handleAdmin(admin);
-					} else {
-						System.out.println("Login failed. Try again.");
-						break;						
-					}
-				} else {
-					//A Guest
-					if(user.getUserType() == UserType.GUEST) {
-						//User of the application is a Guest
-						Guest guest = new Guest(user.getLoginId(), conn, scanner);
-						handleUser(guest);						
-					} else {
-						System.out.println("Login failed. Try again.");
-						break;						
-					}
-				}
 
+				// handle everything for guest here
+				handleUser(guest);
 				
 				break;
 				
@@ -491,14 +533,16 @@ public class UniversityHousingApp {
 				keepRunning = false;
 				
 				break;
+
 			default:
 				System.out.println("Invalid choice");
 			}
 		}
 		
 		scanner.close();
+		
 		//terminate the DB connection before you quit
 		DBConnFactory.getInstance().closeConnection();
 	}
-
+	
 }

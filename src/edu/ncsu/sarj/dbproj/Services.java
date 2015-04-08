@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.ResultSetMetaData;
 
 public class Services {
 	/*
@@ -11,14 +12,21 @@ public class Services {
 	 * Failure is handled gracefully.
 	 * If the query does not work, a simple message is displayed and the control returns
 	 */
-	public static void printQueryOutput(String query,String columnNames[],Connection conn){
+	public static void printQueryOutput(String query, String columnNames[], Connection conn){
 		
-		Statement stmt;
 		int index = 0;
 		String result = null;
 		try {
-			stmt = conn.createStatement();
-			ResultSet resultSet = stmt.executeQuery(query);
+			ResultSet resultSet = queryExecute(query, conn);
+			
+			ResultSetMetaData rsmd = resultSet.getMetaData();
+			int numCols = rsmd.getColumnCount();
+			
+			if(numCols != columnNames.length) {
+				System.out.println("Services.printQueryOutput() ~ Invalid number of column names");
+				return;
+			}
+
 			System.out.println("--------------------------------------------------------------------------");
 			while(resultSet!=null && resultSet.next())
 			{
@@ -34,8 +42,19 @@ public class Services {
 		} catch (SQLException e) {
 			System.out.println("Error in the query!");
 		}
-		catch (Exception e) {
-			System.out.println("An exception has occured!");
+	}
+	
+	private static ResultSet queryExecute(String query, Connection conn) throws SQLException {
+		Statement stmt = conn.createStatement();
+		return stmt.executeQuery(query);
+	}
+	
+	public static void updateStatement(String query, Connection conn) {
+		try {
+			Statement stmt = conn.createStatement();
+			stmt.executeUpdate(query);
+		} catch (SQLException e) {
+			System.out.println("Error in update!");
 		}
 	}
 }

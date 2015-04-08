@@ -8,6 +8,9 @@ public abstract class Person {
 	protected Connection conn = null;
 	protected Scanner scanner = null;
 	protected int loginId = -1;
+	protected UserType userType = UserType.UNKNOWN;
+	
+	public abstract boolean login(String uid, String pass);
 	
 	public abstract void viewVacancy();
 
