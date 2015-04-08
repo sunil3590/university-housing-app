@@ -74,7 +74,7 @@ public class Guest extends Person {
 		System.out.println("Which former Invoice you want to see? " +
 				"Enter 1 for first lease, 2 for second lease and so on...");
 		
-		int option = scanner.nextInt();
+		String option = scanner.nextLine();
 		
 		System.out.println("You have entered " + option);
 		
@@ -93,11 +93,10 @@ public class Guest extends Person {
 		System.out.println("Which former Lease you want to see? " +
 				"Enter 1 for first lease, 2 for second lease and so on...");
 		
-		int option = scanner.nextInt();
+		String option = scanner.nextLine();
 		
 		System.out.println("You have entered " + option);
 		//TODO Enter the query for GUEST here
-		
 	}
 	
 	//@Override

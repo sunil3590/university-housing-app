@@ -76,8 +76,8 @@ public class Student extends Person {
 		System.out.println("Which former Invoice you want to see? " +
 				"Enter 1 for first lease, 2 for second lease and so on...");
 		
-		int option = scanner.nextInt();
-		if(option == 0) {
+		String option = scanner.nextLine();
+		if(option.equals("1")) {
 			return;
 		}
 		
@@ -112,9 +112,9 @@ public class Student extends Person {
 		
 		while(true) {
 			System.out.println("Enter 1 to go back");	
-			int option = scanner.nextInt();
-			if(option == 1) {
-				break;	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
 			}
 		}
 	}
@@ -127,8 +127,8 @@ public class Student extends Person {
 		System.out.println("Which former Lease you want to see? " +
 				"Enter 1 for first lease, 2 for second lease and so on...");
 		
-		int option = scanner.nextInt();
-		if(option == 0) {
+		String option = scanner.nextLine();
+		if(option.equals("1")) {
 			return;
 		}
 		
@@ -140,28 +140,82 @@ public class Student extends Person {
 					+ "FROM LEASE_HISTORY "
 					+ "WHERE PERSON_ID_N = " + Integer.toString(loginId);
 		
-		Services.printQueryOutput(query, new String[]{"LEASE #", "DURATION(SEM)", "PLACE #", 
-				"JOIN DATE", "TERMINATION DATE", "PAYMENT", "DEPOSIT", "LEASE PENALTY"}, conn);
+		String[] colIds = {"LEASE #", "DURATION(SEM)", "PLACE #", "JOIN DATE", 
+				"TERMINATION DATE", "PAYMENT", "DEPOSIT", "LEASE PENALTY"};
 		
+		Services.printQueryOutput(query, colIds, conn);
 	}
 
 	//@Override
 	public void newLeaseRequest() {
-		
+		//3.A.3.1
+		//TODO : TEST
 		System.out.println("Enter the following details");
 		
-		System.out.println("Period of leasing: ");
+		//period
+		System.out.println("Duration of leasing (number of sems): ");
+		String duration = scanner.nextLine();
 		
-		//TODO Enter the query for STUDENT here
+		//preference
+		String query = "SELECT BUILDING_ID_N, BUILDING_NAME_V FROM HOUSING_MASTER";
+		String[] colIds = {"BUILDING #", "BUILDING NAME"};
+		Services.printQueryOutput(query, colIds, conn);
+		
+		System.out.println("Select 3 preferences: ");
+		int i = 0;
+		String[] pref = new String[3];
+		while(i < 3){
+			System.out.println("Select building number: ");
+			pref[i++] = scanner.nextLine();
+		}
+		
+		//join
+		System.out.println("Enter join date (DD-MON-YYYY): ");
+		String join = scanner.nextLine();
+		
+		//leave
+		System.out.println("Enter leave date (DD-MON-YYYY): ");
+		String leave = scanner.nextLine();
+		
+		//payment
+		System.out.println("Monthly / yearly: (month / year)");
+		String payment = scanner.nextLine();
+		
+		query = "INSERT INTO LEASE_REQUEST(REQUEST_ID_N, PERSON_ID_N, NUMBER_OF_SEM_N, "
+				+ "HOUSING_FIRST_N, HOUSING_SECOND_N, HOUSING_THIRD_N, DATE_OFJOIN_DT, "
+				+ "DATE_OFLEAVING_DT, PAYMENT_OPTIONS_V, REQUEST_STATUS_V) "
+				+ "VALUES(SEQ_LEASE_REQ_ID.nextval," + this.loginId + "," + duration + "," + 
+				pref[0] + "," + pref[1] + "," + pref[2] + ",'" + join + "','" + leave + "','" + payment + "'," + "'Pending')";
+		
+		Services.updateStatement(query, conn);
 	}
 
 	//@Override
 	public void terminateLease() {
-		
+		//3.A.3.2
+		//TODO : TEST
 		System.out.println("STUDENT Terminate Lease");
 		
-		//TODO Enter the query for STUDENT here
+		//show current lease
+		this.viewCurrentInvoice();
 		
+		//lease id
+		System.out.println("Confirm by entering lease # : ");
+		String lease = scanner.nextLine();
+		
+		//date
+		System.out.println("When do you want to terminate(DD-MON-YYYY) : ");
+		String date = scanner.nextLine();
+		
+		//reason
+		System.out.println("Reason to terminate : ");
+		String reason = scanner.nextLine();
+		
+		String query = "INSERT INTO LEASE_TERMINATION_REQUEST VALUES(TERMINATION_ID_N , "
+				+ "PERSON_ID_N ,REASON_V ,TERMINATION_DATE_DT , TERMINATION_STATUS_V ) "
+				+ "VALUES(SEQ_LEASE_TERM_ID.nextval," + this.loginId + "," + lease + ",'" + date + ",'Pending')";
+		
+		Services.updateStatement(query, conn);
 	}
 
 	//@Override
@@ -174,18 +228,28 @@ public class Student extends Person {
 		String query = "SELECT REQUEST_ID_N, PERSON_ID_N, NUMBER_OF_SEM_N, DATE_OFJOIN_DT,"
 							+ "DATE_OFLEAVING_DT, PAYMENT_OPTIONS_V, REQUEST_STATUS_V "
 					+ "FROM LEASE_REQUEST "
-					+ "WHERE PERSON_ID_N=1";
+					+ "WHERE PERSON_ID_N=" + this.loginId;
 		
 		String[] colIds = {"REQUEST #", "PERSON #", "DURATION(SEM)", 
 				"JOIN DATE", "LEAVING DATE", "PAYMENT", "STATUS"};
 		
 		Services.printQueryOutput(query, colIds, conn);
 		
+		query = "SELECT TERMINATION_ID_N , LEASE_NUMBER_N , REASON_V  , TERMINATION_STATUS_V  "
+				+ "FROM LEASE_TERMINATION_REQUEST LT "
+				+ "WHERE PERSON_ID_N=" + this.loginId
+				+ " ORDER BY TERMINATION_ID_N";
+
+		String[] colIds2 = {"REQUEST #", "PERSON #", "DURATION(SEM)", 
+				"JOIN DATE", "LEAVING DATE", "PAYMENT", "STATUS"};
+
+		Services.printQueryOutput(query, colIds2, conn);
+
 		while(true) {
 			System.out.println("Enter 1 to go back");	
-			int option = scanner.nextInt();
-			if(option == 1) {
-				break;	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
 			}
 		}
 	}
@@ -234,9 +298,9 @@ public class Student extends Person {
 		
 		while(true) {
 			System.out.println("Enter 1 to go back");	
-			int option = scanner.nextInt();
-			if(option == 1) {
-				break;	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
 			}
 		}
 	}
@@ -267,9 +331,9 @@ public class Student extends Person {
 		
 		while(true) {
 			System.out.println("Enter 1 to go back");	
-			int option = scanner.nextInt();
-			if(option == 1) {
-				break;	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
 			}
 		}
 	}
@@ -293,8 +357,8 @@ public class Student extends Person {
 		
 		while(true) {
 			System.out.println("Enter 1 to go back");	
-			int option = scanner.nextInt();
-			if(option == 1) {
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
 				break;	
 			}
 		}	
@@ -339,9 +403,9 @@ public class Student extends Person {
 		
 		while(true) {
 			System.out.println("Enter 1 to go back");	
-			int option = scanner.nextInt();
-			if(option == 1) {
-				break;	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
 			}
 		}
 	}
@@ -361,11 +425,11 @@ public class Student extends Person {
 		//TODO : TEST
 		System.out.println("STUDENT View Ticket Status");
 		
-		String query1 = "SELECT T_ID"
+		String query1 = "SELECT T_ID, T_DESC"
 				+ "WHERE STUDENT_ID = " + Integer.toString(loginId)
 				+ "ORDER BY T_DATE";
 
-		String[] colIds1 = {"TICKET #"};
+		String[] colIds1 = {"TICKET #", "DESCRIPTION"};
 		
 		Services.printQueryOutput(query1, colIds1, conn);
 		
@@ -391,12 +455,12 @@ public class Student extends Person {
 	public void viewProfile() {
 		//3.D.1
 		//TODO : TEST
-		System.out.println("STUDENT View Profile");
+		System.out.println("--> STUDENT View Profile");
 		
 		String query = "SELECT PERSON_ID_N , FIRST_NAME_V, LAST_NAME_V, PHONE_NUM_N, "
 								+ "ALT_PHONE_NUM_N, TO_CHAR(PERSON_DOB_DT,'DD-MON-YYYY'), "
 								+ "PERSON_SEX_V, PERSON_CATEGORY_V, PERSON_NATIONALITY_V, "
-								+ "CURRENT_STATUS_V, PERSON_COURSE_V, PERSON_TYPE_V "
+								+ "CURRENT_STATUS_V, PERSON_COURSE_V, FAMILY_STUDENT_V "
 					+ "FROM PERSON "
 					+ "WHERE PERSON_ID_N = " + Integer.toString(loginId);
 		
@@ -407,8 +471,8 @@ public class Student extends Person {
 		
 		while(true) {
 			System.out.println("Enter 1 to go back");	
-			int option = scanner.nextInt();
-			if(option == 1) {
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
 				break;
 			}
 		}
@@ -418,25 +482,25 @@ public class Student extends Person {
 	//@Override
 	public void updateProfile() {
 		
-		System.out.println("STUDENT Update Profile");
+		System.out.println("--> STUDENT Update Profile");
 		
 		String pid = Integer.toString(loginId);
 		String query = null;
 		String update = null;
 		
-		System.out.print("Enter First name : ");		
+		System.out.print("Enter First name : ");
 		update = scanner.nextLine();
-		query = "UPDATE PERSON SET FIRST_NAME_V = " + update  + "WHERE PERSON_ID_N = " + pid;
+		query = "UPDATE PERSON SET FIRST_NAME_V = '" + update + "' WHERE PERSON_ID_N = " + pid;
 		Services.updateStatement(query, conn);
 
 		System.out.print("Enter Last name : ");		
 		update = scanner.nextLine();
-		query = "UPDATE PERSON SET LAST_NAME_V = " + update  + "WHERE PERSON_ID_N = " + pid;
+		query = "UPDATE PERSON SET LAST_NAME_V = '" + update + "' WHERE PERSON_ID_N = " + pid;
 		Services.updateStatement(query, conn);
 		
 		System.out.print("Enter phone number : ");		
 		update = scanner.nextLine();
-		query = "UPDATE PERSON SET PHONE_NUM_N = " + update  + "WHERE PERSON_ID_N = " + pid;
+		query = "UPDATE PERSON SET PHONE_NUM_N = " + update + " WHERE PERSON_ID_N = " + pid;
 		Services.updateStatement(query, conn);
 		
 		System.out.print("Enter alternate phone number : ");		
@@ -448,13 +512,13 @@ public class Student extends Person {
 			query = "UPDATE PERSON SET PERSON_DOB_DT = ? WHERE PERSON_ID_N = " + pid;
 			
 			System.out.print("Enter DOB year : ");
-			int year = scanner.nextInt();
+			int year = Integer.parseInt(scanner.nextLine()) - 1990;
 			
 			System.out.print("Enter DOB month : ");
-			int month = scanner.nextInt();
+			int month = Integer.parseInt(scanner.nextLine()) - 1;
 			
 			System.out.print("Enter DOB day : ");
-			int day = scanner.nextInt();
+			int day = Integer.parseInt(scanner.nextLine());
 			
 			@SuppressWarnings("deprecation")
 			Date date = new Date(year, month, day);
@@ -468,22 +532,22 @@ public class Student extends Person {
 		
 		System.out.print("Enter sex : ");		
 		update = scanner.nextLine();
-		query = "UPDATE PERSON SET PERSON_SEX_V = " + update  + "WHERE PERSON_ID_N = " + pid;
+		query = "UPDATE PERSON SET PERSON_SEX_V = '" + update  + "' WHERE PERSON_ID_N = " + pid;
 		Services.updateStatement(query, conn);
 		
 		System.out.print("Enter category : ");		
 		update = scanner.nextLine();
-		query = "UPDATE PERSON SET PERSON_CATEGORY_V = " + update  + "WHERE PERSON_ID_N = " + pid;
+		query = "UPDATE PERSON SET PERSON_CATEGORY_V = '" + update  + "' WHERE PERSON_ID_N = " + pid;
 		Services.updateStatement(query, conn);
 		
 		System.out.print("Enter nationality : ");		
 		update = scanner.nextLine();
-		query = "UPDATE PERSON SET PERSON_NATIONALITY_V = " + update  + "WHERE PERSON_ID_N = " + pid;
+		query = "UPDATE PERSON SET PERSON_NATIONALITY_V = '" + update  + "' WHERE PERSON_ID_N = " + pid;
 		Services.updateStatement(query, conn);
 		
 		System.out.print("Enter course : ");		
 		update = scanner.nextLine();
-		query = "UPDATE PERSON SET PERSON_COURSE_V = " + update  + "WHERE PERSON_ID_N = " + pid;
+		query = "UPDATE PERSON SET PERSON_COURSE_V = '" + update  + "' WHERE PERSON_ID_N = " + pid;
 		Services.updateStatement(query, conn);
 	}
 }

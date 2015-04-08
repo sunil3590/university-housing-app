@@ -34,6 +34,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				housingMenu(person);
@@ -75,6 +76,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				invoiceMenu(student);
@@ -120,6 +122,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				student.requestParkingSpot();
@@ -163,6 +166,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				student.raiseNewTicket();
@@ -193,6 +197,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				student.viewProfile();
@@ -223,6 +228,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				student.viewCurrentInvoice();
@@ -253,6 +259,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				student.viewCurrentLease();
@@ -284,6 +291,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				student.newLeaseRequest();
@@ -331,7 +339,7 @@ public class UniversityHousingApp {
 	}
 
 	public static void handleAdmin(Admin admin) {
-		System.out.println("Hi admin");
+		System.out.println("Hi " + Integer.toString(admin.loginId));
 		
 		boolean keepRunning = true;
 		while(keepRunning) {
@@ -349,6 +357,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				admin.viewLeaseRequests();
@@ -389,6 +398,7 @@ public class UniversityHousingApp {
 			
 			//TODO: Take input as string always and then use Integer.parseInt to convert to integer
 			int option = scanner.nextInt();
+			scanner.nextLine();
 			switch(option) {
 			case 1:
 				admin.viewProfile();

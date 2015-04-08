@@ -26,7 +26,7 @@ public class Services {
 				System.out.println("Services.printQueryOutput() ~ Invalid number of column names");
 				return;
 			}
-
+			
 			System.out.println("--------------------------------------------------------------------------");
 			while(resultSet!=null && resultSet.next())
 			{
@@ -40,7 +40,7 @@ public class Services {
 				System.out.println("--------------------------------------------------------------------------");
 			}
 		} catch (SQLException e) {
-			System.out.println("Error in the query!");
+			System.out.println("Error in the query! : " + e.toString());
 		}
 	}
 	
@@ -54,7 +54,7 @@ public class Services {
 			Statement stmt = conn.createStatement();
 			stmt.executeUpdate(query);
 		} catch (SQLException e) {
-			System.out.println("Error in update!");
+			System.out.println("Error in update!" + e.toString());
 		}
 	}
 }
