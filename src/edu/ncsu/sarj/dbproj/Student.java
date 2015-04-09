@@ -58,8 +58,8 @@ public class Student extends Person {
 		
 		String query = "SELECT L.LINEITEMS_TYPE_V , L.LINEITEM_PRICE_N , TO_CHAR(I.DUE_DATE_DT,'DD-MON-YYYY') "
 					+ "FROM STUDENT_INVOICE I, INVOICE_LINEITEMS L "
-					+ "WHERE L.INVOICE_ID_N = I.INVOICE_ID_N  AND I.STUDENT_ID_N  = "+ Integer.toString(loginId)
-							+ " AND I.PERIOD_START_DT <= SYSDATE AND SYSDATE <= I.PERIOD_END_DT";
+					+ "WHERE L.INVOICE_ID_N = I.INVOICE_ID_N  AND I.STUDENT_ID_N  = "+ Integer.toString(loginId);
+//							+ " AND I.PERIOD_START_DT <= SYSDATE AND SYSDATE <= I.PERIOD_END_DT";
 		
 		String[] colIds = {"INVOICE LINE ITEM", "PRICE", "DUE DATE"};
 		

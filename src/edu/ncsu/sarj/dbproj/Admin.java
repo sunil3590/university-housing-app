@@ -187,11 +187,10 @@ public class Admin {
 		
 		// get all pending maintenance tickets
 		//TODO : write query
-		String query1 = "SELECT T_ID, T_DESC, T_DATE, STUDENT_NAME "
-				+ "FROM MAINTENANCE_VIEW "
-				+ "WHERE STUDENT_ID = " + this.loginId;
+		String query1 = "SELECT T_ID, T_DESC, T_DATE, STUDENT_NAME, STATUS "
+				+ "FROM MAINTENANCE_VIEW ";
 		
-		String[] colIds1 = {"TICKET #", "DESC", "DATE", "STUDENT"};
+		String[] colIds1 = {"TICKET #", "DESC", "DATE", "STUDENT", "STATUS"};
 		
 		Services.printQueryOutput(query1, colIds1, conn);
 		
@@ -204,7 +203,7 @@ public class Admin {
 			return;
 		}
 
-		String query2 = "UPDATE TICKET_LIST SET TICKET_STATUS_V = ‘Processing’ "
+		String query2 = "UPDATE TICKET_LIST SET TICKET_STATUS_V = 'Processing' "
 				+ "WHERE TICKET_ID_N = " + option;
 
 		Services.updateStatement(query2, conn);
