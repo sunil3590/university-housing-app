@@ -74,6 +74,7 @@ public class Admin {
 			return;
 		}
 
+		//TODO : Check stored procedure
 		// get hold of the request 
 		String query2 = "SELECT LR.REQUEST_ID_N, P.FIRST_NAME_V, P.LAST_NAME_V, NUMBER_OF_SEM_N, "
 							+ "DATE_OFJOIN_DT, DATE_OFLEAVING_DT, PAYMENT_OPTIONS_V "
@@ -106,6 +107,7 @@ public class Admin {
 
 	public void viewTerminateLeaseRequests() {
 		//4.A.2
+		//4.A.2.1
 		//TODO : TEST
 		//TODO : Are we printing all columns here?
 		System.out.println("Admin View Terminate Lease Requests");
@@ -148,6 +150,16 @@ public class Admin {
 		}
 		
 		//TODO : terminate the request
+		// get date
+		System.out.println("Enter inspection date(DD-Mon-YYYY) : ");
+		String date = scanner.nextLine();
+		
+		// get damage
+		System.out.println("Enter damage amount : ");
+		String amount = scanner.nextLine();
+		
+		//TODO : Stored procedure
+		
 		// remove from lease, add to history, change to "completed", add line item for damage, remove parking
 		// input : user id, lease id, termination date, damage
 	}
@@ -158,10 +170,12 @@ public class Admin {
 		System.out.println("Admin View Maintenance");
 		
 		// get all pending maintenance tickets
-		//TODO : write query	
-		String query1 = "";
+		//TODO : write query
+		String query1 = "SELECT T_ID, T_DESC, T_DATE, STUDENT_NAME "
+				+ "FROM MAINTENANCE_VIEW "
+				+ "WHERE STUDENT_ID = " + this.loginId;
 		
-		String[] colIds1 = {};
+		String[] colIds1 = {"TICKET #", "DESC", "DATE", "STUDENT"};
 		
 		Services.printQueryOutput(query1, colIds1, conn);
 		
@@ -174,11 +188,10 @@ public class Admin {
 			return;
 		}
 
-		String query2 = "";
+		String query2 = "UPDATE TICKET_LIST SET TICKET_STATUS_V = ‘Processing’ "
+				+ "WHERE TICKET_ID_N = " + option;
 
-		String[] colIds2 = {};
-
-		Services.printQueryOutput(query2, colIds2, conn);
+		Services.updateStatement(query2, conn);
 	}
 
 	public void viewParkingRequests() {
@@ -186,28 +199,54 @@ public class Admin {
 		//TODO : TEST
 		System.out.println("Admin View Parking request");
 		
-		// get all pending maintenance tickets
-		//TODO : write query
-		String query1 = "";
+		// get all parking request
+		String query1 = "SELECT PARKING_REQUEST_ID_N, P.FIRST_NAME_V, LAST_NAME_V,VEHICLE_TYPE_V "
+				+ "FROM PARKING_REQUEST PR, PERSON P "
+				+ "WHERE P.PERSON_ID_N = PR.PERSON_ID_N "
+				+ "ORDER BY PARKING_REQUEST_ID_N";
 		
-		String[] colIds1 = {};
+		String[] colIds1 = {"REQUEST #", "FNAME", "LNAME", "VEHICLE TYPE"};
 		
 		Services.printQueryOutput(query1, colIds1, conn);
 		
-		// get ticket id to be processed
+		// get parking request ID
 		System.out.println("Enter PARKING REQUEST # for more info, 0 to go back.");
-		String option = scanner.nextLine();
+		String rid = scanner.nextLine();
 		
 		// go back on seeing 0
-		if(option.equals("0")) {
+		if(rid.equals("0")) {
 			return;
 		}
 
-		String query2 = "";
+		//get info on request
+		String query2 = "SELECT P.FIRST_NAME_V, LAST_NAME_V,VEHICLE_TYPE_V, "
+				+ "HANDICAP_STATUS_V,NEARBY_OPTION_V "
+				+ "FROM PARKING_REQUEST PR, PERSON P "
+				+ "WHERE P.PERSON_ID_N = PR.PERSON_ID_N AND PARKING_REQUEST_ID_N = " + rid
+				+ "ORDER BY PARKING_REQUEST_ID_N";
 
-		String[] colIds2 = {};
+		String[] colIds2 = {"FNAME", "LNAME", "VEHICLE TYPE" , "HANDICAP", "NEARBY"};
 
 		Services.printQueryOutput(query2, colIds2, conn);
+		
+		// do you want to approve this
+		System.out.println("Do you want to approve this?(1 = yes, anything else = no) : ");
+		String option = scanner.nextLine();
+		
+		if(option.equals("1")) {
+			//update query
+			String query3= "UPDATE PARKING_REQUEST SET REQUEST_STATUS_V='Approved' "
+					+ "WHERE PARKING_REQUEST_ID_N = " + option;
+			Services.updateStatement(query3, conn);
+		}
+		
+		while(true) {
+			System.out.println("Enter 1 to go back");	
+			option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
+			}
+		}
 	}
 
 	public void viewProfile() {

@@ -157,8 +157,8 @@ public class Student extends Person {
 		String duration = scanner.nextLine();
 		
 		//preference
-		String query = "SELECT BUILDING_ID_N, BUILDING_NAME_V FROM HOUSING_MASTER";
-		String[] colIds = {"BUILDING #", "BUILDING NAME"};
+		String query = "SELECT BUILDING_ID_N, BUILDING_TYPE_V, BUILDING_NAME_V FROM HOUSING_MASTER";
+		String[] colIds = {"BUILDING #", "TYPE", "BUILDING NAME"};
 		Services.printQueryOutput(query, colIds, conn);
 		
 		System.out.println("Select 3 preferences: ");
@@ -213,18 +213,12 @@ public class Student extends Person {
 		
 		String query = "INSERT INTO LEASE_TERMINATION_REQUEST VALUES(TERMINATION_ID_N , "
 				+ "PERSON_ID_N ,REASON_V ,TERMINATION_DATE_DT , TERMINATION_STATUS_V ) "
-				+ "VALUES(SEQ_LEASE_TERM_ID.nextval," + this.loginId + "," + lease + ",'" + date + ",'Pending')";
+				+ "VALUES(SEQ_LEASE_TERM_ID.nextval," + this.loginId + ",'" + reason + "'," + lease + ",'" + date + ",'Pending')";
 		
 		Services.updateStatement(query, conn);
 	}
 
-	//@Override
-	public void viewRequest() {
-		//3.A.4.1
-		//TODO : TEST
-		
-		System.out.println("STUDENT View Request by Student");
-		
+	private void viewLeaseRequest() {
 		String query = "SELECT REQUEST_ID_N, PERSON_ID_N, NUMBER_OF_SEM_N, DATE_OFJOIN_DT,"
 							+ "DATE_OFLEAVING_DT, PAYMENT_OPTIONS_V, REQUEST_STATUS_V "
 					+ "FROM LEASE_REQUEST "
@@ -234,16 +228,28 @@ public class Student extends Person {
 				"JOIN DATE", "LEAVING DATE", "PAYMENT", "STATUS"};
 		
 		Services.printQueryOutput(query, colIds, conn);
-		
-		query = "SELECT TERMINATION_ID_N , LEASE_NUMBER_N , REASON_V  , TERMINATION_STATUS_V  "
+	}
+	
+	private void viewTerminateRequest() {
+		String query = "SELECT TERMINATION_ID_N , LEASE_NUMBER_N , REASON_V  , TERMINATION_STATUS_V  "
 				+ "FROM LEASE_TERMINATION_REQUEST LT "
 				+ "WHERE PERSON_ID_N=" + this.loginId
 				+ " ORDER BY TERMINATION_ID_N";
 
-		String[] colIds2 = {"REQUEST #", "PERSON #", "DURATION(SEM)", 
+		String[] colIds = {"REQUEST #", "PERSON #", "DURATION(SEM)", 
 				"JOIN DATE", "LEAVING DATE", "PAYMENT", "STATUS"};
 
-		Services.printQueryOutput(query, colIds2, conn);
+		Services.printQueryOutput(query, colIds, conn);
+	}
+	
+	//@Override
+	public void viewRequest() {
+		//3.A.4.1
+		//TODO : TEST
+		System.out.println("STUDENT View Request by Student");
+		
+		this.viewLeaseRequest();
+		this.viewTerminateRequest();
 
 		while(true) {
 			System.out.println("Enter 1 to go back");	
@@ -256,11 +262,38 @@ public class Student extends Person {
 
 	//@Override
 	public void cancelRequest() {
-		
+		//3.A.4.2
+		//TODO : TEST
 		System.out.println("STUDENT View Request");
 		
-		//TODO Enter the query for STUDENT here
+		// show current requests
+		this.viewRequest();
 		
+		// ask which type of request to cancel
+		System.out.println("Enter type of request to cancel(1 = lease, 2 = termination) : ");
+		String type = scanner.nextLine();
+		
+		// ask which request to cancel
+		System.out.println("Enter REQUEST # to cancel : ");
+		String rid = scanner.nextLine();
+		
+		if(type.equals("1")) {
+			String query = "UPDATE LEASE_REQUEST SET REQUEST_STATUS_V='Cancelled' WHERE REQUEST_ID_N = " + rid;
+			Services.updateStatement(query, conn);
+		} else if(type.equals("2")) {
+			String query = "UPDATE LEASE_TERMINATION_REQUEST  "
+					+ "SET  TERMINATION_STATUS_V = 'Cancelled' "
+					+ "WHERE TERMINATION_ID_N =" + rid;
+			Services.updateStatement(query, conn);
+		}
+		
+		while(true) {
+			System.out.println("Enter 1 to go back");	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
+			}
+		}
 	}
 
 	//@Override
@@ -307,11 +340,29 @@ public class Student extends Person {
 	
 	//@Override
 	public void requestParkingSpot() {
-		
+		//3.B.1
+		//TODO - TEST
 		System.out.println("STUDENT Request Parking");
 		
-		//TODO Enter the query for STUDENT here
+		String query;
 		
+		//vehicle type
+		System.out.println("What is the parking spot type? # (Handicapped , Bike, Small Car, Large Car) : ");
+		String vehicleType = scanner.nextLine();
+		
+		String handicapped = "No";
+		if(vehicleType.toLowerCase().contains("handicap"))
+			handicapped = "Yes";
+		
+		System.out.println("Do you wish to have a spot near your housing? (Yes, No) : ");
+		String nearByOption = scanner.nextLine();
+		
+		query = "INSERT INTO PARKING_REQUEST (PARKING_REQUEST_ID_N,PERSON_ID_N, VEHICLE_TYPE_V, "
+				+ " HANDICAP_STATUS_V, NEARBY_OPTION_V,REQUEST_STATUS_V) VALUES "
+				+ " (SEQ_PARK_REQ_ID.NEXTVAL,"+this.loginId+", '"+vehicleType+"', '"+handicapped+"', "
+				+  " '"+nearByOption+"' ,'Pending') ";
+		
+		Services.updateStatement(query, conn);
 	}
 
 	//@Override
@@ -366,20 +417,49 @@ public class Student extends Person {
 
 	//@Override
 	public void renewParkingSpot() {
-		
+		//3.B.4
+		//TODO - TEST
 		System.out.println("STUDENT Renew Parking Spot");
 		
-		//TODO Enter the query for STUDENT here
+		String query;
+		viewCurrentParkingSpot();
 		
+		System.out.println("Please enter the Spot # : ");
+		scanner.nextLine();
+		
+		query = " INSERT INTO PARKING_REQUEST(PARKING_REQUEST_ID_N,PERSON_ID_N,VEHICLE_TYPE_V,HANDICAP_STATUS_V,NEARBY_OPTION_V,REQUEST_STATUS_V) VALUES (SEQ_PARK_REQ_ID.NEXTVAL,"+this.loginId+", " +
+				" (SELECT P1.VEHICLE_TYPE_V FROM PARKING_REQUEST P1 WHERE P1.PARKING_REQUEST_ID_N =( SELECT MAX(P2.PARKING_REQUEST_ID_N) FROM PARKING_REQUEST  P2 WHERE P2.REQUEST_STATUS_V='Processed' AND P2.PERSON_ID_N = "+this.loginId+")), " +
+				" (SELECT P1.HANDICAP_STATUS_V FROM PARKING_REQUEST P1 WHERE P1.PARKING_REQUEST_ID_N =( SELECT MAX(P2.PARKING_REQUEST_ID_N) FROM PARKING_REQUEST  P2 WHERE P2.REQUEST_STATUS_V='Processed' AND P2.PERSON_ID_N = "+this.loginId+")), "+
+				" (SELECT P1.NEARBY_OPTION_V FROM PARKING_REQUEST P1 WHERE P1.PARKING_REQUEST_ID_N =( SELECT MAX(P2.PARKING_REQUEST_ID_N) FROM PARKING_REQUEST  P2 WHERE P2.REQUEST_STATUS_V='Processed' AND P2.PERSON_ID_N = "+this.loginId+")), 'Pending') ";
+		
+		Services.updateStatement(query, conn);
 	}
 
 	//@Override
 	public void returnParkingSpot() {
-		
+		//3.B.5
+		//TODO - TEST
 		System.out.println("STUDENT Return Parking Spot");
 		
-		//TODO Enter the query for STUDENT here
+		String query;
 		
+		viewCurrentParkingSpot();
+		
+		System.out.println("Please enter the Spot # : ");
+		scanner.nextLine();
+		
+		query = " UPDATE PARKING_REQUEST SET REQUEST_STATUS_V = 'Completed' "
+				+ " WHERE PARKING_REQUEST_ID_N = (SELECT max(P1.PARKING_REQUEST_ID_N) "
+							+ "FROM PARKING_REQUEST P1 "
+							+ "WHERE  P1.REQUEST_STATUS_V ='Processed' "
+							+ "	AND P1.PERSON_ID_N="+this.loginId+") ";	
+		Services.updateStatement(query, conn);
+		
+		query = " DELETE FROM ASSIGNED_PARKING WHERE LEASE_NUMBER_N = "
+				+ "(SELECT L.LEASE_NUMBER_N "
+				+ "FROM LEASE L "
+				+ "WHERE L.PERSON_ID_N = "+this.loginId+"  ) ";
+		Services.updateStatement(query, conn);
 	}
 
 	//@Override
@@ -412,11 +492,31 @@ public class Student extends Person {
 
 	//@Override
 	public void raiseNewTicket() {
+		//3.C.1
+		//TODO : TEST
+		System.out.println("STUDENT Request Parking");
 		
-		System.out.println("STUDENT Raise New Ticket");
+		String query = "SELECT TICKET_ID_N, TICKET_DESC_V  FROM TICKETING_MASTER";
+	
+		String[] colIds = {"TICKET #", "DESC"};
 		
-		//TODO Enter the query for STUDENT here
+		Services.printQueryOutput(query, colIds, conn);
 		
+		query = "INSERT INTO TICKET_LIST(TICKET_LIST_ID_N ,TICKET_ID_N ,"
+				+ "TICKETED_DATE_DT , STUDENT_ID_N , PROBLEM_LOCATION_N , TICKET_STATUS_V ) "
+				+ "VALUES (SEQ_TICKET_LIST_ID.NEXTVAL, X , SYSDATE,  1, "
+				+ "(SELECT L.PLACE_NUMBER_N FROM LEASE L "
+				+ "WHERE L.PERSON_ID_N = " + this.loginId + "),'Pending')";
+		
+		Services.updateStatement(query, conn);
+		
+		while(true) {
+			System.out.println("Enter 1 to go back");	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
+			}
+		}
 	}
 
 	//@Override
