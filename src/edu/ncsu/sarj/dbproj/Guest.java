@@ -28,7 +28,7 @@ public class Guest extends Person {
 		try {
 			Statement stmt = conn.createStatement();
 			
-			String query = "SELECT * FROM LOGIN WHERE LOGIN_NAME_V = '" + 
+			String query = "SELECT * FROM LOGIN WHERE LOGIN_ID_N = '" + 
 					approvalId + "'";
 			
 			ResultSet result = stmt.executeQuery(query);
