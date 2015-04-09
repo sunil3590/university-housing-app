@@ -123,27 +123,31 @@ public class Student extends Person {
 	public void viewFormerLeases() {
 		//3.A.2.2
 		//TODO : TEST
-		
-		System.out.println("Which former Lease you want to see? " +
-				"Enter 1 for first lease, 2 for second lease and so on...");
-		
-		String option = scanner.nextLine();
-		if(option.equals("1")) {
-			return;
-		}
-		
-		System.out.println("You have entered " + option);
-
-		String query = "SELECT LEASE_NUMBER_N, NUMBER_OF_SEM_N, PLACE_NUMBER_N , "
-							+ "DATE_OFJOIN_DT , DATE_OFTERMINATION_DT , PAYMENT_OPTIONS_V , "
-							+ "SECURITY_DEPOSIT_N , LEASE_PENALTY_N "
+		String query = "SELECT LEASE_NUMBER_N, DATE_OFJOIN_DT, DATE_OFTERMINATION_DT "
 					+ "FROM LEASE_HISTORY "
 					+ "WHERE PERSON_ID_N = " + Integer.toString(loginId);
 		
-		String[] colIds = {"LEASE #", "DURATION(SEM)", "PLACE #", "JOIN DATE", 
-				"TERMINATION DATE", "PAYMENT", "DEPOSIT", "LEASE PENALTY"};
+		String[] colIds = {"LEASE #", "JOIN DATE", "TERMINATION DATE"};
 		
 		Services.printQueryOutput(query, colIds, conn);
+		
+		System.out.print("Enter lease ID(0 to go back) : ");
+		
+		String option = scanner.nextLine();
+		if(option.equals("0")) {
+			return;
+		}
+		
+		String query2 = "SELECT LEASE_NUMBER_N, NUMBER_OF_SEM_N, PLACE_NUMBER_N , "
+				+ "DATE_OFJOIN_DT , DATE_OFTERMINATION_DT , PAYMENT_OPTIONS_V , "
+				+ "SECURITY_DEPOSIT_N , LEASE_PENALTY_N "
+		+ "FROM LEASE_HISTORY "
+		+ "WHERE PERSON_ID_N = " + Integer.toString(loginId);
+
+		String[] colIds2 = {"LEASE #", "DURATION(SEM)", "PLACE #", "JOIN DATE", 
+				"TERMINATION DATE", "PAYMENT", "DEPOSIT", "LEASE PENALTY"};
+
+		Services.printQueryOutput(query2, colIds2, conn);		
 	}
 
 	//@Override
@@ -197,10 +201,10 @@ public class Student extends Person {
 		System.out.println("STUDENT Terminate Lease");
 		
 		//show current lease
-		this.viewCurrentInvoice();
+		this.viewCurrentLease();
 		
 		//lease id
-		System.out.println("Confirm by entering lease # : ");
+		System.out.println("Confirm by entering lease # (0 to go back) : ");
 		String lease = scanner.nextLine();
 		
 		//date
@@ -211,9 +215,9 @@ public class Student extends Person {
 		System.out.println("Reason to terminate : ");
 		String reason = scanner.nextLine();
 		
-		String query = "INSERT INTO LEASE_TERMINATION_REQUEST VALUES(TERMINATION_ID_N , "
-				+ "PERSON_ID_N ,REASON_V ,TERMINATION_DATE_DT , TERMINATION_STATUS_V ) "
-				+ "VALUES(SEQ_LEASE_TERM_ID.nextval," + this.loginId + ",'" + reason + "'," + lease + ",'" + date + ",'Pending')";
+		String query = "INSERT INTO LEASE_TERMINATION_REQUEST "
+				+ "VALUES(SEQ_LEASE_TERM_ID.nextval, " + this.loginId + "," + 
+				lease + ",'" + reason + "','" + date + "','Pending')";
 		
 		Services.updateStatement(query, conn);
 	}

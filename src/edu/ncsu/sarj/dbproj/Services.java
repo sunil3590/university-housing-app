@@ -27,6 +27,14 @@ public class Services {
 				return;
 			}
 			
+			// go back if there is nothing to print
+			resultSet.last();
+			if(resultSet.getRow() == 0) {
+				System.out.println("Could not retrieve any rows.");
+				return;
+			}
+			resultSet.beforeFirst();
+			
 			System.out.println("--------------------------------------------------------------------------");
 			while(resultSet!=null && resultSet.next())
 			{
@@ -45,7 +53,8 @@ public class Services {
 	}
 	
 	private static ResultSet queryExecute(String query, Connection conn) throws SQLException {
-		Statement stmt = conn.createStatement();
+		Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, 
+				ResultSet.CONCUR_UPDATABLE);
 		return stmt.executeQuery(query);
 	}
 	

@@ -115,7 +115,7 @@ public class Admin {
 		
 		// get all pending requests
 		String query1 = "SELECT TERMINATION_ID_N, LEASE_NUMBER_N "
-						+ "FROM LEASE_TERMINATION_REQUEST LTR"
+						+ "FROM LEASE_TERMINATION_REQUEST LTR "
 						+ "WHERE TERMINATION_STATUS_V='Pending' "
 						+ "ORDER BY TERMINATION_ID_N";
 		
@@ -132,11 +132,11 @@ public class Admin {
 			return;
 		}
 
-		String query2 = "SELECT TERMINATION_ID_N, PERSON_ID_N, LEASE_NUMBER_N, REASON_V,FIRST_NAME_V,LAST_NAME_V "
+		String query2 = "SELECT TERMINATION_ID_N, P.PERSON_ID_N, LEASE_NUMBER_N, REASON_V,FIRST_NAME_V,LAST_NAME_V "
 					+ "FROM LEASE_TERMINATION_REQUEST LTR, PERSON P "
 					+ "WHERE P.PERSON_ID_N=LTR.PERSON_ID_N AND TERMINATION_STATUS_V='Pending' AND "
 					+ "LTR.TERMINATION_ID_N = " + tid
-					+ "ORDER BY TERMINATION_ID_N";
+					+ " ORDER BY TERMINATION_ID_N";
 
 		String[] colIds2 = {"TERMINATION REQUEST #", "PERSON #", "LEASE #", "REASON", "FIRST NAME", "LAST NAME"};
 
@@ -162,17 +162,17 @@ public class Admin {
 		
 		//TODO : Stored procedure
 		
-		// remove from lease, add to history, change to "completed", add line item for damage, remove parking
+		// remove from lease, add to history, change to "completed", add line item for damage, remove parking, 
 		// input : user id, lease id, termination date, damage
 		
 		CallableStatement cstmt = null;
 		try {
-			String storeProc = "{call terminateLease(?,?,?,?)}";
+			String storeProc = "{call TERMINATE_LEASE_PRC(?,?,?)}";
 			cstmt = conn.prepareCall(storeProc);
-			cstmt.setInt(1, this.loginId);
-			cstmt.setInt(2, Integer.parseInt(tid));
-			cstmt.setString(3, date);
-			cstmt.setInt(4, Integer.parseInt(amount));
+			//term req ID, date, amount
+			cstmt.setInt(1, Integer.parseInt(tid));
+			cstmt.setString(2, date);
+			cstmt.setInt(3, Integer.parseInt(amount));
 			cstmt.executeUpdate();
 		}
 		catch (SQLException e) {
