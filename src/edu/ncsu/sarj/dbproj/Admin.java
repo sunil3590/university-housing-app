@@ -216,12 +216,12 @@ public class Admin {
 		System.out.println("Admin View Parking request");
 		
 		// get all parking request
-		String query1 = "SELECT PARKING_REQUEST_ID_N, P.FIRST_NAME_V, LAST_NAME_V,VEHICLE_TYPE_V "
+		String query1 = "SELECT PARKING_REQUEST_ID_N, P.FIRST_NAME_V, LAST_NAME_V,VEHICLE_TYPE_V, PR.REQUEST_STATUS_V "
 				+ "FROM PARKING_REQUEST PR, PERSON P "
 				+ "WHERE P.PERSON_ID_N = PR.PERSON_ID_N "
 				+ "ORDER BY PARKING_REQUEST_ID_N";
 		
-		String[] colIds1 = {"REQUEST #", "FNAME", "LNAME", "VEHICLE TYPE"};
+		String[] colIds1 = {"REQUEST #", "FNAME", "LNAME", "VEHICLE TYPE", "REQUEST STATUS"};
 		
 		Services.printQueryOutput(query1, colIds1, conn);
 		
