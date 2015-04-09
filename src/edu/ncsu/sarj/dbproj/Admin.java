@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.CallableStatement;
 
 public class Admin {
 	private Connection conn = null;
@@ -124,16 +125,17 @@ public class Admin {
 		
 		// get request id to be processed
 		System.out.println("Enter TERMINATION REQUEST # for more info, 0 to go back.");
-		String option = scanner.nextLine();
+		String tid = scanner.nextLine();
 		
 		// go back on seeing 0
-		if(option.equals("0")) {
+		if(tid.equals("0")) {
 			return;
 		}
 
 		String query2 = "SELECT TERMINATION_ID_N, PERSON_ID_N, LEASE_NUMBER_N, REASON_V,FIRST_NAME_V,LAST_NAME_V "
 					+ "FROM LEASE_TERMINATION_REQUEST LTR, PERSON P "
-					+ "WHERE P.PERSON_ID_N=LTR.PERSON_ID_N AND TERMINATION_STATUS_V='Pending' "
+					+ "WHERE P.PERSON_ID_N=LTR.PERSON_ID_N AND TERMINATION_STATUS_V='Pending' AND "
+					+ "LTR.TERMINATION_ID_N = " + tid
 					+ "ORDER BY TERMINATION_ID_N";
 
 		String[] colIds2 = {"TERMINATION REQUEST #", "PERSON #", "LEASE #", "REASON", "FIRST NAME", "LAST NAME"};
@@ -142,7 +144,7 @@ public class Admin {
 		
 		// terminate right now if required
 		System.out.println("Do you want to terminate the request now? 1 = YES, anything else = NO");
-		option = scanner.nextLine();
+		String option = scanner.nextLine();
 		
 		// go back on not seeing 1
 		if(!option.equals("1")) {
@@ -162,6 +164,20 @@ public class Admin {
 		
 		// remove from lease, add to history, change to "completed", add line item for damage, remove parking
 		// input : user id, lease id, termination date, damage
+		
+		CallableStatement cstmt = null;
+		try {
+			String storeProc = "{call terminateLease(?,?,?,?)}";
+			cstmt = conn.prepareCall(storeProc);
+			cstmt.setInt(1, this.loginId);
+			cstmt.setInt(2, Integer.parseInt(tid));
+			cstmt.setString(3, date);
+			cstmt.setInt(4, Integer.parseInt(amount));
+			cstmt.executeUpdate();
+		}
+		catch (SQLException e) {
+			System.out.println("Error in getEmpName stored procedure : " + e);   
+		}
 	}
 
 	public void viewMaintenanceTickets() {

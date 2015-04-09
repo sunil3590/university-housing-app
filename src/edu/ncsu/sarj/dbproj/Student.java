@@ -236,8 +236,7 @@ public class Student extends Person {
 				+ "WHERE PERSON_ID_N=" + this.loginId
 				+ " ORDER BY TERMINATION_ID_N";
 
-		String[] colIds = {"REQUEST #", "PERSON #", "DURATION(SEM)", 
-				"JOIN DATE", "LEAVING DATE", "PAYMENT", "STATUS"};
+		String[] colIds = {"REQUEST #", "LEASE #", "REASON", "STATUS"};
 
 		Services.printQueryOutput(query, colIds, conn);
 	}
@@ -248,7 +247,10 @@ public class Student extends Person {
 		//TODO : TEST
 		System.out.println("STUDENT View Request by Student");
 		
+		System.out.println("STUDENT View LEASE Requests");
 		this.viewLeaseRequest();
+		
+		System.out.println("STUDENT View TERMINATE Requests");
 		this.viewTerminateRequest();
 
 		while(true) {
@@ -372,13 +374,22 @@ public class Student extends Person {
 		
 		System.out.println("STUDENT View Parking information");
 		
-		String query = "SELECT LOT.PARKING_TYPE_V, LOT.ADDRESS_V "
-					+ "FROM PARKING_LOT LOT , PARKING_SPOT SPOT "
-					+ "WHERE SPOT.PARKING_LOT_ID_N = LOT.PARKING_LOT_ID_N";
+		System.out.println("Parking lots");
+		String query = "SELECT LOT.PARKING_TYPE_V, LOT.ADDRESS_V FROM PARKING_LOT LOT";
+
+		String[] colIds1 = {"LOT TYPE", "ADDRESS"};
 		
-		String[] colIds = {"LOT TYPE", "ADDRESS"};
+		Services.printQueryOutput(query, colIds1, conn);
 		
-		Services.printQueryOutput(query, colIds, conn);
+		System.out.println("Vacant SLOTS");
+		query = "SELECT LOT.PARKING_TYPE_V, LOT.ADDRESS_V, SPOT.PARKING_SPOT_ID_N ,SPOT.SPOT_TYPE_N  "
+				+ "FROM PARKING_LOT LOT , PARKING_SPOT SPOT "
+				+ "WHERE SPOT.PARKING_LOT_ID_N = LOT.PARKING_LOT_ID_N AND "
+				+ "SPOT.PARKING_SPOT_ID_N NOT IN (SELECT AS.PARKING_SPOT_ID_N FROM ASSIGNED_PARKING AS)";
+		
+		String[] colIds2 = {"LOT TYPE", "ADDRESS"};
+		
+		Services.printQueryOutput(query, colIds2, conn);
 		
 		while(true) {
 			System.out.println("Enter 1 to go back");	
@@ -400,7 +411,7 @@ public class Student extends Person {
 					+ "FROM PARKING_LOT LOT , PARKING_SPOT SPOT, ASSIGNED_PARKING ASSIGNED, PARKING_REQUEST REQUEST  "
 					+ "WHERE SPOT.PARKING_LOT_ID_N = LOT.PARKING_LOT_ID_N AND "
 						+ "ASSIGNED.PARKING_SPOT_ID_N = SPOT.PARKING_SPOT_ID_N AND "
-						+ "REQUEST.PERSON_ID_N = " + Integer.toBinaryString(loginId);
+						+ "REQUEST.PERSON_ID_N = " + Integer.toString(loginId);
 		
 		String[] colIds = {"SPOT #", "LOT TYPE", "LOT ADDR", "PERMIT #"};
 		
