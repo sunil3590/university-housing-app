@@ -60,38 +60,55 @@ public class Guest extends Person {
 		String query = "SELECT L.LINEITEMS_TYPE_V , L.LINEITEM_PRICE_N , TO_CHAR(I.DUE_DATE_DT,'DD-MON-YYYY') "
 					+ "FROM STUDENT_INVOICE I, INVOICE_LINEITEMS L "
 					+ "WHERE L.INVOICE_ID_N = I.INVOICE_ID_N  AND I.STUDENT_ID_N  = "+ Integer.toString(loginId)
-							+ " AND I.PERIOD_START_DT <= SYSDATE AND SYSDATE<=I.PERIOD_END_DT";
+							+ " AND I.PERIOD_START_DT <= SYSDATE AND SYSDATE <= I.PERIOD_END_DT";
 		
 		String[] colIds = {"INVOICE LINE ITEM", "PRICE", "DUE DATE"};
 		
 		Services.printQueryOutput(query, colIds, conn);
 		
-		
+		while(true) {
+			System.out.println("Enter 1 to go back");	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
+			}
+		}
 	}
 	
 	//@Override
 	public void viewFormerInvoices() {
-		//5.A.1.2
-		//TODO : I guess the query is wrong. TEST well
+		//3.A.1.2
+		//TODO : TEST
+		String query1 = "SELECT I.INVOICE_ID_N, I.PERIOD_START_DT, I.PERIOD_END_DT "
+					+ "FROM STUDENT_INVOICE I "
+					+ "WHERE I.PERIOD_END_DT  < SYSDATE AND I.STUDENT_ID_N = " + this.loginId;
+
+		String[] colIds1 = {"INVOICE #", "START", "END"};
 		
-		System.out.println("Which former Invoice you want to see? " +
-				"Enter 1 for first lease, 2 for second lease and so on...");
+		Services.printQueryOutput(query1, colIds1, conn);
 		
+		System.out.println("Enter INVOICE #(0 to go back) ");
 		String option = scanner.nextLine();
-		if(option.equals("1")) {
+		if(option.equals("0")) {
 			return;
 		}
 		
-		System.out.println("You have entered " + option);
-		
-		String[] colIds = {"INVOICE #", "START", "END", "DUE", "AMOUNT"};
-				
-		String query = "SELECT ROWNUM, I.PERIOD_START_DT, I.PERIOD_END_DT ,  I.DUE_DATE_DT , I.AMOUNT_DUE_N  "
+		String query2 = "SELECT I.INVOICE_ID_N, I.PERIOD_START_DT, I.PERIOD_END_DT ,  I.DUE_DATE_DT , I.AMOUNT_DUE_N  "
 					+ "FROM STUDENT_INVOICE I, INVOICE_LINEITEMS  L "
 					+ "WHERE L.INVOICE_ID_N  = I.INVOICE_ID_N  AND I.STUDENT_ID_N  = "+ Integer.toString(loginId) +
-					"AND I.PERIOD_START_DT  < SYSDATE AND SYSDATE>I.PERIOD_END_DT";
+					"AND I.PERIOD_END_DT  < SYSDATE AND I.INVOICE_ID_N = " + option;
 		
-		Services.printQueryOutput(query, colIds, conn);
+		String[] colIds2 = {"INVOICE #", "START", "END", "DUE", "AMOUNT"};
+		
+		Services.printQueryOutput(query2, colIds2, conn);
+		
+		while(true) {
+			System.out.println("Enter 1 to go back");	
+			option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
+			}
+		}
 	}
 
 	//@Override
@@ -124,27 +141,31 @@ public class Guest extends Person {
 	public void viewFormerLeases() {
 		//5.A.2.2
 		//TODO : TEST
-		
-		System.out.println("Which former Lease you want to see? " +
-				"Enter 1 for first lease, 2 for second lease and so on...");
-		
-		String option = scanner.nextLine();
-		if(option.equals("1")) {
-			return;
-		}
-		
-		System.out.println("You have entered " + option);
-
-		String query = "SELECT LEASE_NUMBER_N, NUMBER_OF_SEM_N, PLACE_NUMBER_N , "
-							+ "DATE_OFJOIN_DT , DATE_OFTERMINATION_DT , PAYMENT_OPTIONS_V , "
-							+ "SECURITY_DEPOSIT_N , LEASE_PENALTY_N "
+		String query = "SELECT LEASE_NUMBER_N, DATE_OFJOIN_DT, DATE_OFTERMINATION_DT "
 					+ "FROM LEASE_HISTORY "
 					+ "WHERE PERSON_ID_N = " + Integer.toString(loginId);
 		
-		String[] colIds = {"LEASE #", "DURATION(SEM)", "PLACE #", "JOIN DATE", 
-				"TERMINATION DATE", "PAYMENT", "DEPOSIT", "LEASE PENALTY"};
+		String[] colIds = {"LEASE #", "JOIN DATE", "TERMINATION DATE"};
 		
 		Services.printQueryOutput(query, colIds, conn);
+		
+		System.out.print("Enter lease ID(0 to go back) : ");
+		
+		String option = scanner.nextLine();
+		if(option.equals("0")) {
+			return;
+		}
+		
+		String query2 = "SELECT LEASE_NUMBER_N, NUMBER_OF_SEM_N, PLACE_NUMBER_N , "
+				+ "DATE_OFJOIN_DT , DATE_OFTERMINATION_DT , PAYMENT_OPTIONS_V , "
+				+ "SECURITY_DEPOSIT_N , LEASE_PENALTY_N "
+		+ "FROM LEASE_HISTORY "
+		+ "WHERE PERSON_ID_N = " + Integer.toString(loginId);
+
+		String[] colIds2 = {"LEASE #", "DURATION(SEM)", "PLACE #", "JOIN DATE", 
+				"TERMINATION DATE", "PAYMENT", "DEPOSIT", "LEASE PENALTY"};
+
+		Services.printQueryOutput(query2, colIds2, conn);		
 	}
 
 	//@Override
@@ -198,11 +219,15 @@ public class Guest extends Person {
 		System.out.println("GUEST Terminate Lease");
 		
 		//show current lease
-		this.viewCurrentInvoice();
+		this.viewCurrentLease();
 		
 		//lease id
-		System.out.println("Confirm by entering lease # : ");
+		System.out.println("Confirm by entering lease # (0 to go back) : ");
 		String lease = scanner.nextLine();
+		if(lease.equals("0")) {
+			System.out.println("Going back.");
+			return;
+		}
 		
 		//date
 		System.out.println("When do you want to terminate(DD-MON-YYYY) : ");
@@ -212,9 +237,9 @@ public class Guest extends Person {
 		System.out.println("Reason to terminate : ");
 		String reason = scanner.nextLine();
 		
-		String query = "INSERT INTO LEASE_TERMINATION_REQUEST VALUES(TERMINATION_ID_N , "
-				+ "PERSON_ID_N ,REASON_V ,TERMINATION_DATE_DT , TERMINATION_STATUS_V ) "
-				+ "VALUES(SEQ_LEASE_TERM_ID.nextval," + this.loginId + ",'" + reason + "'," + lease + ",'" + date + ",'Pending')";
+		String query = "INSERT INTO LEASE_TERMINATION_REQUEST "
+				+ "VALUES(SEQ_LEASE_TERM_ID.nextval, " + this.loginId + "," + 
+				lease + ",'" + reason + "','" + date + "','Pending')";
 		
 		Services.updateStatement(query, conn);
 	}
@@ -237,8 +262,7 @@ public class Guest extends Person {
 				+ "WHERE PERSON_ID_N=" + this.loginId
 				+ " ORDER BY TERMINATION_ID_N";
 
-		String[] colIds = {"REQUEST #", "PERSON #", "DURATION(SEM)", 
-				"JOIN DATE", "LEAVING DATE", "PAYMENT", "STATUS"};
+		String[] colIds = {"REQUEST #", "LEASE #", "REASON", "STATUS"};
 
 		Services.printQueryOutput(query, colIds, conn);
 	}
@@ -249,7 +273,10 @@ public class Guest extends Person {
 		//TODO : TEST
 		System.out.println("GUEST View Request by Student");
 		
+		System.out.println("STUDENT View LEASE Requests");
 		this.viewLeaseRequest();
+
+		System.out.println("STUDENT View TERMINATE Requests");
 		this.viewTerminateRequest();
 
 		while(true) {
@@ -383,10 +410,11 @@ public class Guest extends Person {
 		Services.printQueryOutput(query, colIds1, conn);
 		
 		System.out.println("Vacant SLOTS");
-		query = "SELECT LOT.PARKING_TYPE_V, LOT.ADDRESS_V, SPOT.PARKING_SPOT_ID_N , SPOT.SPOT_TYPE_N  "
-				+ "FROM PARKING_LOT LOT , PARKING_SPOT SPOT "
+		query = "SELECT LOT.PARKING_TYPE_V, LOT.ADDRESS_V, SPOT.PARKING_SPOT_ID_N ,PTYPE.SPOT_TYPE_V  "
+				+ "FROM PARKING_LOT LOT , PARKING_SPOT SPOT , PARKING_SPOT_TYPE PTYPE "
 				+ "WHERE SPOT.PARKING_LOT_ID_N = LOT.PARKING_LOT_ID_N AND "
-				+ "SPOT.PARKING_SPOT_ID_N NOT IN (SELECT AS.PARKING_SPOT_ID_N FROM ASSIGNED_PARKING AS) "
+				+ "SPOT.SPOT_TYPE_N = PTYPE.SPOT_TYPE_ID_N AND "
+				+ "SPOT.PARKING_SPOT_ID_N NOT IN (SELECT ASS.PARKING_SPOT_ID_N FROM ASSIGNED_PARKING ASS) "
 				+ "AND LOT.PARKING_TYPE_V='General'";
 		
 		String[] colIds2 = {"LOT TYPE", "ADDRESS"};
@@ -488,7 +516,7 @@ public class Guest extends Person {
 					+ "FROM PARKING_REQUEST REQUEST "
 					+ "WHERE REQUEST.PARKING_REQUEST_ID_N = (SELECT MAX(REQ.PARKING_REQUEST_ID_N) "
 					+ "FROM PARKING_REQUEST REQ "
-					+ "WHERE REQ.PARKING_REQUEST_ID_N = " + Integer.toString(loginId) + ")";
+					+ "WHERE REQ.PERSON_ID_N = " + Integer.toString(loginId) + ")";
 		
 		String[] colIds = {"REQUEST #", "VEHICLE TYPE", "HANDICAP STATUS", "NEARBY OPTION", "STATUS"};
 		
@@ -515,9 +543,13 @@ public class Guest extends Person {
 		
 		Services.printQueryOutput(query, colIds, conn);
 		
+		System.out.println("Please enter the Ticket # for the type of the problem : ");
+		String issueType = scanner.nextLine();
+		
+		
 		query = "INSERT INTO TICKET_LIST(TICKET_LIST_ID_N ,TICKET_ID_N ,"
 				+ "TICKETED_DATE_DT , STUDENT_ID_N , PROBLEM_LOCATION_N , TICKET_STATUS_V ) "
-				+ "VALUES (SEQ_TICKET_LIST_ID.NEXTVAL, X , SYSDATE,  1, "
+				+ "VALUES (SEQ_TICKET_LIST_ID.NEXTVAL, "+ issueType+ ", SYSDATE, "+ Integer.toString(loginId) + ", "
 				+ "(SELECT L.PLACE_NUMBER_N FROM LEASE L "
 				+ "WHERE L.PERSON_ID_N = " + this.loginId + "),'Pending')";
 		
@@ -538,7 +570,7 @@ public class Guest extends Person {
 		//TODO : TEST
 		System.out.println("GUEST View Ticket Status");
 		
-		String query1 = "SELECT T_ID, T_DESC"
+		String query1 = "SELECT T_ID, T_DESC FROM MAINTENANCE_VIEW "
 				+ "WHERE STUDENT_ID = " + Integer.toString(loginId)
 				+ "ORDER BY T_DATE";
 
@@ -556,7 +588,7 @@ public class Guest extends Person {
 		
 		String query2 = "SELECT T_ID, T_DESC, T_DATE, STUDENT_NAME "
 					+ "FROM MAINTENANCE_VIEW "
-					+ "WHERE T_ID = " + option + "STUDENT_ID = " + Integer.toString(loginId)
+					+ "WHERE T_ID = " + option + " AND STUDENT_ID = " + Integer.toString(loginId)
 					+ "ORDER BY T_DATE";
 		
 		String[] colIds2 = {"TICKET #", "DESCRIPTION", "DATE", "STUDENT"};
