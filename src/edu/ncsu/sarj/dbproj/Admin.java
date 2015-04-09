@@ -3,6 +3,7 @@ package edu.ncsu.sarj.dbproj;
 import java.sql.Connection;
 import java.util.Scanner;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.CallableStatement;
@@ -249,6 +250,27 @@ public class Admin {
 		String option = scanner.nextLine();
 		
 		if(option.equals("1")) {
+			// check if the user already has a parking spot
+			String query4 = "SELECT * "
+					+ "FROM PARKING_REQUEST R, ASSIGNED_PARKING P, LEASE L "
+					+ "WHERE L.LEASE_NUMBER_N = P.LEASE_NUMBER_N AND L.PERSON_ID_N = R.PERSON_ID_N";
+			
+			try {
+				Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, 
+						ResultSet.CONCUR_UPDATABLE);
+				ResultSet resultSet = stmt.executeQuery(query4);
+				
+				resultSet.last();
+				if(resultSet.getRow() > 0) {
+					System.out.println("Cannot approve. Already has one.");
+					return;
+				}
+				resultSet.beforeFirst();
+								
+			} catch (SQLException e) {
+				
+			}
+
 			//update query
 			String query3= "UPDATE PARKING_REQUEST SET REQUEST_STATUS_V='Processed' "
 					+ "WHERE PARKING_REQUEST_ID_N = " + rid;
