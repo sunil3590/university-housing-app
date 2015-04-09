@@ -510,7 +510,7 @@ public class Student extends Person {
 	public void raiseNewTicket() {
 		//3.C.1
 		//TODO : TEST
-		System.out.println("STUDENT Request Parking");
+		System.out.println("STUDENT Request new ticket");
 		
 		String query = "SELECT TICKET_ID_N, TICKET_DESC_V  FROM TICKETING_MASTER";
 	
@@ -518,9 +518,13 @@ public class Student extends Person {
 		
 		Services.printQueryOutput(query, colIds, conn);
 		
+		System.out.println("Please enter the Ticket # for the type of the problem : ");
+		String issueType = scanner.nextLine();
+		
+		
 		query = "INSERT INTO TICKET_LIST(TICKET_LIST_ID_N ,TICKET_ID_N ,"
 				+ "TICKETED_DATE_DT , STUDENT_ID_N , PROBLEM_LOCATION_N , TICKET_STATUS_V ) "
-				+ "VALUES (SEQ_TICKET_LIST_ID.NEXTVAL, X , SYSDATE,  1, "
+				+ "VALUES (SEQ_TICKET_LIST_ID.NEXTVAL, "+ issueType+ ", SYSDATE, "+ Integer.toString(loginId) + ", "
 				+ "(SELECT L.PLACE_NUMBER_N FROM LEASE L "
 				+ "WHERE L.PERSON_ID_N = " + this.loginId + "),'Pending')";
 		
@@ -541,7 +545,7 @@ public class Student extends Person {
 		//TODO : TEST
 		System.out.println("STUDENT View Ticket Status");
 		
-		String query1 = "SELECT T_ID, T_DESC"
+		String query1 = "SELECT T_ID, T_DESC FROM MAINTENANCE_VIEW "
 				+ "WHERE STUDENT_ID = " + Integer.toString(loginId)
 				+ "ORDER BY T_DATE";
 
@@ -559,7 +563,7 @@ public class Student extends Person {
 		
 		String query2 = "SELECT T_ID, T_DESC, T_DATE, STUDENT_NAME "
 					+ "FROM MAINTENANCE_VIEW "
-					+ "WHERE T_ID = " + option + "STUDENT_ID = " + Integer.toString(loginId)
+					+ "WHERE T_ID = " + option + " AND STUDENT_ID = " + Integer.toString(loginId)
 					+ "ORDER BY T_DATE";
 		
 		String[] colIds2 = {"TICKET #", "DESCRIPTION", "DATE", "STUDENT"};
