@@ -253,7 +253,7 @@ public class Student extends Person {
 		
 		System.out.println("STUDENT View LEASE Requests");
 		this.viewLeaseRequest();
-		
+
 		System.out.println("STUDENT View TERMINATE Requests");
 		this.viewTerminateRequest();
 
@@ -386,12 +386,13 @@ public class Student extends Person {
 		Services.printQueryOutput(query, colIds1, conn);
 		
 		System.out.println("Vacant SLOTS");
-		query = "SELECT LOT.PARKING_TYPE_V, LOT.ADDRESS_V, SPOT.PARKING_SPOT_ID_N ,SPOT.SPOT_TYPE_N  "
-				+ "FROM PARKING_LOT LOT , PARKING_SPOT SPOT "
+		query = "SELECT LOT.PARKING_TYPE_V, LOT.ADDRESS_V, SPOT.PARKING_SPOT_ID_N ,PTYPE.SPOT_TYPE_V  "
+				+ "FROM PARKING_LOT LOT , PARKING_SPOT SPOT , PARKING_SPOT_TYPE PTYPE "
 				+ "WHERE SPOT.PARKING_LOT_ID_N = LOT.PARKING_LOT_ID_N AND "
-				+ "SPOT.PARKING_SPOT_ID_N NOT IN (SELECT AS.PARKING_SPOT_ID_N FROM ASSIGNED_PARKING AS)";
+				+ "SPOT.SPOT_TYPE_N = PTYPE.SPOT_TYPE_ID_N AND "
+				+ "SPOT.PARKING_SPOT_ID_N NOT IN (SELECT ASS.PARKING_SPOT_ID_N FROM ASSIGNED_PARKING ASS)";
 		
-		String[] colIds2 = {"LOT TYPE", "ADDRESS"};
+		String[] colIds2 = {"LOT TYPE", "ADDRESS", "SPOT ID", "SPOT TYPE"};
 		
 		Services.printQueryOutput(query, colIds2, conn);
 		
@@ -490,7 +491,7 @@ public class Student extends Person {
 					+ "FROM PARKING_REQUEST REQUEST "
 					+ "WHERE REQUEST.PARKING_REQUEST_ID_N = (SELECT MAX(REQ.PARKING_REQUEST_ID_N) "
 					+ "FROM PARKING_REQUEST REQ "
-					+ "WHERE REQ.PARKING_REQUEST_ID_N = " + Integer.toString(loginId) + ")";
+					+ "WHERE REQ.PERSON_ID_N = " + Integer.toString(loginId) + ")";
 		
 		String[] colIds = {"REQUEST #", "VEHICLE TYPE", "HANDICAP STATUS", "NEARBY OPTION", "STATUS"};
 		
