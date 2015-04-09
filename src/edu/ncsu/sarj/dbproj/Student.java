@@ -59,38 +59,55 @@ public class Student extends Person {
 		String query = "SELECT L.LINEITEMS_TYPE_V , L.LINEITEM_PRICE_N , TO_CHAR(I.DUE_DATE_DT,'DD-MON-YYYY') "
 					+ "FROM STUDENT_INVOICE I, INVOICE_LINEITEMS L "
 					+ "WHERE L.INVOICE_ID_N = I.INVOICE_ID_N  AND I.STUDENT_ID_N  = "+ Integer.toString(loginId)
-							+ " AND I.PERIOD_START_DT <= SYSDATE AND SYSDATE<=I.PERIOD_END_DT";
+							+ " AND I.PERIOD_START_DT <= SYSDATE AND SYSDATE <= I.PERIOD_END_DT";
 		
 		String[] colIds = {"INVOICE LINE ITEM", "PRICE", "DUE DATE"};
 		
 		Services.printQueryOutput(query, colIds, conn);
 		
-		
+		while(true) {
+			System.out.println("Enter 1 to go back");	
+			String option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
+			}
+		}
 	}
 	
 	//@Override
 	public void viewFormerInvoices() {
 		//3.A.1.2
-		//TODO : I guess the query is wrong. TEST well
+		//TODO : TEST
+		String query1 = "SELECT I.INVOICE_ID_N, I.PERIOD_START_DT, I.PERIOD_END_DT "
+					+ "FROM STUDENT_INVOICE I "
+					+ "WHERE I.PERIOD_END_DT  < SYSDATE AND I.STUDENT_ID_N = " + this.loginId;
+
+		String[] colIds1 = {"INVOICE #", "START", "END"};
 		
-		System.out.println("Which former Invoice you want to see? " +
-				"Enter 1 for first lease, 2 for second lease and so on...");
+		Services.printQueryOutput(query1, colIds1, conn);
 		
+		System.out.println("Enter INVOICE #(0 to go back) ");
 		String option = scanner.nextLine();
-		if(option.equals("1")) {
+		if(option.equals("0")) {
 			return;
 		}
 		
-		System.out.println("You have entered " + option);
-		
-		String[] colIds = {"INVOICE #", "START", "END", "DUE", "AMOUNT"};
-				
-		String query = "SELECT ROWNUM, I.PERIOD_START_DT, I.PERIOD_END_DT ,  I.DUE_DATE_DT , I.AMOUNT_DUE_N  "
+		String query2 = "SELECT I.INVOICE_ID_N, I.PERIOD_START_DT, I.PERIOD_END_DT ,  I.DUE_DATE_DT , I.AMOUNT_DUE_N  "
 					+ "FROM STUDENT_INVOICE I, INVOICE_LINEITEMS  L "
 					+ "WHERE L.INVOICE_ID_N  = I.INVOICE_ID_N  AND I.STUDENT_ID_N  = "+ Integer.toString(loginId) +
-					"AND I.PERIOD_START_DT  < SYSDATE AND SYSDATE>I.PERIOD_END_DT";
+					"AND I.PERIOD_END_DT  < SYSDATE AND I.INVOICE_ID_N = " + option;
 		
-		Services.printQueryOutput(query, colIds, conn);
+		String[] colIds2 = {"INVOICE #", "START", "END", "DUE", "AMOUNT"};
+		
+		Services.printQueryOutput(query2, colIds2, conn);
+		
+		while(true) {
+			System.out.println("Enter 1 to go back");	
+			option = scanner.nextLine();
+			if(option.equals("1")) {
+				break;
+			}
+		}
 	}
 
 	//@Override
@@ -206,6 +223,10 @@ public class Student extends Person {
 		//lease id
 		System.out.println("Confirm by entering lease # (0 to go back) : ");
 		String lease = scanner.nextLine();
+		if(lease.equals("0")) {
+			System.out.println("Going back.");
+			return;
+		}
 		
 		//date
 		System.out.println("When do you want to terminate(DD-MON-YYYY) : ");
