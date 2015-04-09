@@ -251,8 +251,8 @@ public class Admin {
 		
 		if(option.equals("1")) {
 			//update query
-			String query3= "UPDATE PARKING_REQUEST SET REQUEST_STATUS_V='Approved' "
-					+ "WHERE PARKING_REQUEST_ID_N = " + option;
+			String query3= "UPDATE PARKING_REQUEST SET REQUEST_STATUS_V='Processed' "
+					+ "WHERE PARKING_REQUEST_ID_N = " + rid;
 			Services.updateStatement(query3, conn);
 		}
 		
